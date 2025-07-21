@@ -1,17 +1,10 @@
 /**
-This `google_client_config` data source retrieves the current authenticated user's Google Cloud configuration.
-https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/client_config
- */
-
-data "google_client_config" "this" {}
-
-/**
 This google_compute_global_address resource creates a global static IP address for the load balancer.
 https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_global_address
 */
 
 resource "google_compute_global_address" "this" {
-  project      = data.google_client_config.this.project
+  project      = var.project_id
   name         = "${var.prefix_name}-lb-ip-address"
   ip_version   = "IPV4"
   address_type = "EXTERNAL"
@@ -24,7 +17,7 @@ https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/c
 
 resource "google_compute_backend_bucket" "this" {
   provider = google
-  project  = data.google_client_config.this.project
+  project  = var.project_id
 
   name        = "${var.prefix_name}-bucket"
   bucket_name = var.bucket_name
@@ -38,7 +31,7 @@ https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/c
 
 resource "google_compute_url_map" "bucket" {
   provider = google
-  project  = data.google_client_config.this.project
+  project  = var.project_id
 
   name        = "${var.prefix_name}-lb"
   description = "URL map for ${var.prefix_name}"
@@ -53,7 +46,7 @@ https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/c
 
 resource "google_compute_target_http_proxy" "http" {
   count   = var.enable_http ? 1 : 0
-  project = data.google_client_config.this.project
+  project = var.project_id
   name    = "${var.prefix_name}-http-proxy"
   url_map = google_compute_url_map.bucket.id
 }
@@ -66,7 +59,7 @@ https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/c
 resource "google_compute_global_forwarding_rule" "http" {
   count                 = var.enable_http ? 1 : 0
   provider              = google
-  project               = data.google_client_config.this.project
+  project               = var.project_id
   name                  = "${var.prefix_name}-http-rule"
   target                = google_compute_target_http_proxy.http[0].self_link
   ip_address            = google_compute_global_address.this.address
@@ -95,7 +88,7 @@ https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/c
 
 resource "google_compute_target_https_proxy" "https" {
   count   = var.enable_ssl ? 1 : 0
-  project = data.google_client_config.this.project
+  project = var.project_id
   name    = "${var.prefix_name}-https-proxy"
   url_map = google_compute_url_map.bucket.id
 
@@ -110,7 +103,7 @@ https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/c
 resource "google_compute_global_forwarding_rule" "https" {
   count                 = var.enable_ssl ? 1 : 0
   provider              = google
-  project               = data.google_client_config.this.project
+  project               = var.project_id
   name                  = "${var.prefix_name}-https-rule"
   target                = google_compute_target_https_proxy.https[0].self_link
   ip_address            = google_compute_global_address.this.address

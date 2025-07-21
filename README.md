@@ -1,15 +1,15 @@
-# Terraform Google Project Service Module
+# Terraform Load Balancer GCS Module
 
-This Terraform module allows management of a single API service for a Google Cloud project.
+This Terraform module allows management of Load Balancer in front of Google Cloud Storage.
 
 ## Usage
 
-### Create Google Project Service
+### Create Load Balancer GCS
 
 ```hcl
 module "load_balancer" {
   source  = "c0x12c/load-balancer-gcs/gcp"
-  version = "~> 1.0.0"
+  version = "~> 1.0.1"
 
   prefix_name = "proj-x"
   bucket_name = "proj-x-static-website"
@@ -54,7 +54,6 @@ No modules.
 | [google_compute_target_http_proxy.http](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_target_http_proxy) | resource |
 | [google_compute_target_https_proxy.https](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_target_https_proxy) | resource |
 | [google_compute_url_map.bucket](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_url_map) | resource |
-| [google_client_config.this](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/client_config) | data source |
 
 ## Inputs
 
@@ -67,6 +66,7 @@ No modules.
 | <a name="input_enable_http"></a> [enable\_http](#input\_enable\_http) | If true, enable HTTP for this BackendBucket. | `bool` | `true` | no |
 | <a name="input_enable_ssl"></a> [enable\_ssl](#input\_enable\_ssl) | If true, enable SSL for this BackendBucket. | `bool` | `true` | no |
 | <a name="input_prefix_name"></a> [prefix\_name](#input\_prefix\_name) | Prefix for all resources created by this module. | `string` | n/a | yes |
+| <a name="input_project_id"></a> [project\_id](#input\_project\_id) | The ID of the project in which the resource belongs. | `string` | n/a | yes |
 
 ## Outputs
 
